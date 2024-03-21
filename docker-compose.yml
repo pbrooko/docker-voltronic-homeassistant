@@ -27,24 +27,46 @@ services:
       - /dev/bus/usb:/dev/bus/usb:rwm
       - /dev/ttyUSB0:/dev/ttyUSB0:rwm
       - /dev/ttyUSB1:/dev/ttyUSB1:rwm
+      - /dev/hidraw0:/dev/hidraw0:rwm
 
     # Serial Port Mapping...
       - /dev/ttyS0:/dev/ttyS0
       - /dev/ttyS1:/dev/ttyS1
       - /dev/ttyS2:/dev/ttyS2
 
-  # Used to auto-update images as we release new versions...
-  watchtower:
-    # Please see the following for configuration options:
-    #    https://containrrr.github.io/watchtower/container-selection/
-    image: containrrr/watchtower
-    container_name: watchtower
-
-    restart: always
-    privileged: true
-
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/ha:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - 8123:8123
 
-    command: --interval 500
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:latest
+    restart: unless-stopped
+    volumes:
+      - ./config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+
+
+
+  # Used to auto-update images as we release new versions...
+  #   watchtower:
+  #     # Please see the following for configuration options:
+  #     #    https://containrrr.github.io/watchtower/container-selection/
+  #     image: containrrr/watchtower
+  #     container_name: watchtower
+  #
+  #     restart: always
+  #     privileged: true
+  #
+  #     volumes:
+  #       - /var/run/docker.sock:/var/run/docker.sock
+  #
+  #     command: --interval 500
 

@@ -1,5 +1,5 @@
 {
-    "server": "[HA_MQTT_IP]",
+    "server": "mosquitto",
     "port": "1883",
     "topic": "homeassistant",
     "devicename": "voltronic",
